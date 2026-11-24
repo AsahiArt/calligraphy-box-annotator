@@ -216,13 +216,19 @@ cba anki --deck-name glyphs --out glyphs.apkg --front char
 
 每张图是 JPEG（质量约 85，最长边约 400 像素，框外留 8 像素）。图放进牌组的媒体文件，字段里只写 `<img src="文件名.jpg">`，不把图嵌成 base64，也不写本机绝对路径。
 
-默认模板在 `cba/anki_templates/default/`（`front.html`、`front-char.html`、`back.html`、`style.css`、`template.json`）。样子是一页暖纸色：正面居中一个字或一张字形，背面上面是这个字，下面是全部写法，图注来自 `Sources`。样式会先用牌组媒体里的 `_serif.otf` 和 `_caoshu.ttf`（文件名，不是本机路径），没有就退回系统宋体。模板 id 写在 `template.json` 的 `id` 里，和牌组名一起决定笔记模板 id。要改版式，复制这个目录，改 HTML 和 CSS，然后：
+默认模板在 `cba/anki_templates/default/`（`front.html`、`front-char.html`、`back.html`、`style.css`、`template.json`）。正面仍是整页居中的字或字形。背面的题目只占字高和一小圈边距，贴在顶部；下面的写法图用掉剩下的大部分高度。一两种写法时图更大，更多时换行并在这一区内滚动。Anki 的 `nightMode` / `night_mode`，以及系统的深色外观（`prefers-color-scheme: dark`），会换成暖黑色纸和浅色字；字形图本身不反色。样式会先用牌组媒体里的 `_serif.otf` 和 `_caoshu.ttf`（文件名，不是本机路径），没有就退回系统宋体。模板 id 写在 `template.json` 的 `id` 里，和牌组名一起决定笔记模板 id。要改版式，复制这个目录，改 HTML 和 CSS，然后：
 
 ```bash
 python -m cba anki --template-dir path/to/my-templates --out mine.apkg --json
 ```
 
 `template.json` 里的 `fields` 必须是上面五个字段的子集。模板里的 `{{字段}}` 必须在这份列表中，否则命令会退出并写明是哪个文件、哪个字段。可选的 `id` 是模板集的名字；不写则用目录名。`--front` 选择 `fronts.image` 或 `fronts.char` 指向的文件。
+
+已经做好的「古文草书·书谱」牌组不必改字段，也不必改笔记。`tools/patch_apkg_back.py` 只替换该模型的背面模板和 CSS，牌组 id、模型 id、笔记 GUID、媒体和复习进度都不动。`Rank` 仍然只存在字段里，背面不显示它。包里如果只有 `collection.anki21b`，需要另外安装 `zstandard`，否则脚本会停下来、不写出新文件。
+
+```bash
+python tools/patch_apkg_back.py --apkg shupu.apkg --out shupu-back.apkg
+```
 
 示例图版上，`乙` 是重文点，`戊` 和 `子` 是不制卡，所以 `python -m cba anki --json` 得到 6 张笔记、6 个媒体文件，并写出 `calligraphy.apkg`。
 
@@ -298,7 +304,7 @@ python crop_glyphs.py
 
 To drive the same steps from an agent, use `python -m cba` or the `cba` console script (status, export-column, apply-spec, contact-sheet, validate, anki, serve). The agent supplies its own vision; this repo never calls a model API. The workflow, spec format, and the rule against rewriting human-approved boxes are in [AGENTS.md](AGENTS.md).
 
-`cba anki` is the last step. It builds a generic deck from `boxes.json` and the plate images: one note per character. Fields are `Char`, `Image` (one `<img>`), `Variants` (an `<img>` per form), `Sources` (one `plate·ti` caption per line), and `Count`. Layout is not rendered into those fields. It lives in `cba/anki_templates/default/` (`front.html`, `front-char.html`, `back.html`, `style.css`, `template.json`). `--front image` uses `front.html`; `--front char` uses `front-char.html`. Copy that directory and pass `--template-dir` to restyle the cards. `template.json` `fields` must be a subset of those five names, and every `{{Field}}` in the HTML must be in that list. The deck id comes from `--deck-name`. The model id comes from that name plus the template set `id` (the directory name when `id` is omitted). Each note GUID comes from the deck name and the character, so importing the same deck again updates notes. Glyphs are JPEG media files, not base64 and not a local file path. `repeatMark` and `noCard` boxes are skipped. On the synthetic demo, `python -m cba anki --json` writes `calligraphy.apkg` (6 notes; the repeat mark and the two noCard boxes are omitted).
+`cba anki` is the last step. It builds a generic deck from `boxes.json` and the plate images: one note per character. Fields are `Char`, `Image` (one `<img>`), `Variants` (an `<img>` per form), `Sources` (one `plate·ti` caption per line), and `Count`. Layout is not rendered into those fields. It lives in `cba/anki_templates/default/` (`front.html`, `front-char.html`, `back.html`, `style.css`, `template.json`). `--front image` uses `front.html`; `--front char` uses `front-char.html`. The front stays a full-page centered glyph or character. On the back the question is only as tall as the character plus a small margin, and the gallery uses the remaining space. Anki `nightMode` / `night_mode` and `prefers-color-scheme: dark` switch to warm-dark paper and light text; glyph images are not inverted. `tools/patch_apkg_back.py` can apply that back and CSS to an existing 书谱 package without changing its fields, ids, media, or scheduling. `Rank` is still not shown. A package that contains only `collection.anki21b` needs the optional `zstandard` module. Copy that directory and pass `--template-dir` to restyle the cards. `template.json` `fields` must be a subset of those five names, and every `{{Field}}` in the HTML must be in that list. The deck id comes from `--deck-name`. The model id comes from that name plus the template set `id` (the directory name when `id` is omitted). Each note GUID comes from the deck name and the character, so importing the same deck again updates notes. Glyphs are JPEG media files, not base64 and not a local file path. `repeatMark` and `noCard` boxes are skipped. On the synthetic demo, `python -m cba anki --json` writes `calligraphy.apkg` (6 notes; the repeat mark and the two noCard boxes are omitted).
 
 Install it with uv, then run it from any directory. Writes go to the current directory or `--data-dir`, and the installed package is read-only:
 

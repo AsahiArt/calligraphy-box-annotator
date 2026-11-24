@@ -89,6 +89,8 @@ class IdTests(unittest.TestCase):
     def test_ids_depend_only_on_the_deck_name_and_character(self) -> None:
         self.assertEqual(deck_id_for("calligraphy"), deck_id_for("calligraphy"))
         self.assertNotEqual(deck_id_for("calligraphy"), deck_id_for("other"))
+        self.assertEqual(deck_id_for("calligraphy"), 1556553358)
+        self.assertEqual(model_id_for("calligraphy", "default"), 783445602)
         self.assertEqual(model_id_for("calligraphy"), model_id_for("calligraphy", "default"))
         self.assertNotEqual(model_id_for("calligraphy", "default"), model_id_for("calligraphy", "plain"))
         self.assertNotEqual(deck_id_for("calligraphy"), model_id_for("calligraphy", "default"))

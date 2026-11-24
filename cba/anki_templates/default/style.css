@@ -25,6 +25,16 @@
   --grass: "AlbumCaoshu", "AlbumSerif", serif;
 }
 
+/* OS dark theme when Anki has not stamped a night-mode class. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #1a1714;
+    --ink: #f4ecd8;
+    --quiet: #cbbfa8;
+    --rule: #4a433a;
+  }
+}
+
 *,
 *::before,
 *::after {
@@ -150,34 +160,37 @@ body,
   font-weight: 400;
 }
 
+/* Back only: the question is a compact top bar. The gallery takes the rest. */
 .leaf.back {
-  display: grid;
-  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
-  grid-template-columns: minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   align-items: stretch;
-  justify-items: stretch;
+  justify-content: flex-start;
+  height: 100%;
+  min-height: 0;
   padding: 0;
+  overflow: hidden;
 }
 
 .leaf.back .reprise,
 .leaf.back .gallery {
-  min-height: 0;
   min-width: 0;
-  overflow: hidden;
   display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .leaf.back .reprise {
+  flex: 0 0 auto;
   flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   width: 100%;
-  height: 100%;
-  padding: 2vmin 5vmin;
-  margin: 0;
-  border-bottom: 1px solid var(--rule);
-  container-type: size;
+  height: auto;
   min-height: 0;
+  margin: 0;
+  padding: 0.45rem 0.9rem 0.4rem;
+  overflow: hidden;
+  border-bottom: 1px solid var(--rule);
+  container-type: normal;
 }
 
 .leaf.back .reprise .front-single,
@@ -187,16 +200,13 @@ body,
   width: 100%;
 }
 
-.leaf.back .reprise .han.printed {
-  font-size: clamp(40px, 13vmin, 94px);
-}
-
+.leaf.back .reprise .han.printed,
 .leaf.back .reprise .han.printed.solo {
-  font-size: clamp(52px, 16vmin, 114px);
+  font-size: clamp(28px, 8vmin, 52px);
 }
 
 .leaf.back .reprise .sep {
-  margin: 0.12em 0.7em 0.9em;
+  margin: 0.08em 0.55em 0.2em;
 }
 
 .gallery {
@@ -272,7 +282,7 @@ body,
   padding: 0;
 }
 
-/* Anki missing-image chrome must not steal the 50/50 gallery. */
+/* Anki's missing-image placeholder must not take a gallery slot. */
 .missing-image,
 img.missing-image,
 .gallery .missing-image,
@@ -291,68 +301,98 @@ img.missing-image,
 .han.printed,
 .han.printed.solo,
 .han.cursive {
-  color: #1c1a17 !important;
-  -webkit-text-fill-color: #1c1a17 !important;
+  color: var(--ink) !important;
+  -webkit-text-fill-color: var(--ink) !important;
 }
 
-.nightMode,
-.night_mode,
+/* Anki night mode. Same warm-dark paper on html, body, and .card so the
+   reviewer's class lands wherever this Anki build puts it. */
 html.nightMode,
+html.night_mode,
 body.nightMode,
-.card.nightMode,
-.night_mode.card {
-  --paper: #f4ecd8;
-  --ink: #1c1a17;
-  --quiet: #6f675c;
-  --rule: #c9c0ac;
-}
-
+body.night_mode,
 .nightMode,
 .night_mode,
-.nightMode .card,
-.night_mode .card,
 .card.nightMode,
 .card.night_mode,
+.nightMode .card,
+.night_mode .card,
 .nightMode #qa,
 .night_mode #qa {
+  --paper: #1a1714;
+  --ink: #f4ecd8;
+  --quiet: #cbbfa8;
+  --rule: #4a433a;
   background: var(--paper);
   background-color: var(--paper);
   color: var(--ink);
-}
-
-html.nightMode,
-body.nightMode,
-html.night_mode,
-body.night_mode {
-  background: var(--paper);
-  background-color: var(--paper);
-  color: var(--ink);
-}
-
-.nightMode .han,
-.night_mode .han,
-.nightMode .han.printed,
-.night_mode .han.printed {
-  color: #1c1a17 !important;
-  -webkit-text-fill-color: #1c1a17 !important;
 }
 
 .nightMode .slot img,
 .night_mode .slot img,
 .nightMode .card .slot img,
 .night_mode .card .slot img,
-.slot img {
+.nightMode .solo-img img,
+.night_mode .solo-img img,
+.slot img,
+.solo-img img,
+.gallery img {
   filter: none !important;
   -webkit-filter: none !important;
   mix-blend-mode: normal !important;
   opacity: 1 !important;
 }
 
-/* all-writings gallery */
-.leaf.back .gallery.multi{display:flex;flex-wrap:wrap;align-content:flex-start;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;gap:6px;padding:2vmin}
-.gallery.multi .slot{flex:0 0 auto;height:auto;width:auto;container-type:normal;overflow:visible}
-.gallery.multi .slot img{height:22vmin;max-height:none;max-width:none}
-.gallery.multi .slot figcaption{font-size:11px}
+/* Back gallery fills everything under the compact question. */
+.leaf.back .gallery,
+.leaf.back .gallery.multi {
+  flex: 1 1 auto;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  justify-content: center;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  gap: 10px 12px;
+  padding: 0.7rem 0.75rem 0.9rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.leaf.back .gallery.multi .slot {
+  flex: 0 1 auto;
+  height: auto;
+  width: auto;
+  max-width: 100%;
+  container-type: normal;
+  overflow: visible;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.leaf.back .gallery img,
+.leaf.back .gallery.multi .slot img {
+  height: min(34vh, 240px);
+  width: auto;
+  max-width: min(88vw, 360px);
+  max-height: none;
+  object-fit: contain;
+}
+
+.leaf.back .gallery.multi.few img,
+.leaf.back .gallery.multi.few .slot img {
+  height: min(62vh, 560px);
+  max-width: min(92vw, 680px);
+}
+
+.leaf.back .gallery.multi .slot figcaption,
+.leaf.back .gallery.multi figcaption {
+  font-size: clamp(11px, 2.4vmin, 14px);
+  color: var(--quiet);
+}
 
 
 /* Representative glyph on an image front. The printed character uses .han.printed.solo. */
