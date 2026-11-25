@@ -53,15 +53,6 @@
     if (sh && h < sh * 0.58) h = Math.round(sh * 0.70);
     return Math.round(h);
   }
-  function paperColor(){
-    var nodes = [document.querySelector(".card"), document.body, document.documentElement];
-    for (var i = 0; i < nodes.length; i++) {
-      if (!nodes[i]) continue;
-      var value = getComputedStyle(nodes[i]).getPropertyValue("--paper");
-      if (value && value.trim()) return value.trim();
-    }
-    return "#f4ecd8";
-  }
   function fit(){
     var h = measure();
     if (!h) return;
@@ -73,7 +64,6 @@
       if (!el) return;
       el.style.height = el.style.minHeight = el.style.maxHeight = px;
       el.style.overflow = "hidden";
-      el.style.background = paperColor();
     });
   }
   function markCount(){

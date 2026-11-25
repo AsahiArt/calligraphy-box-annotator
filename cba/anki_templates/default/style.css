@@ -41,12 +41,14 @@
   box-sizing: border-box;
 }
 
+/* !important so Anki's reviewer background does not cover --paper.
+   Card scripts set the pane height only. */
 html,
 body,
 #qa,
 .card {
-  background: var(--paper);
-  background-color: var(--paper);
+  background: var(--paper) !important;
+  background-color: var(--paper) !important;
   color: var(--ink);
   height: var(--pane, 100%);
   min-height: var(--pane, 100%);
@@ -323,8 +325,8 @@ body.night_mode,
   --ink: #f4ecd8;
   --quiet: #cbbfa8;
   --rule: #4a433a;
-  background: var(--paper);
-  background-color: var(--paper);
+  background: var(--paper) !important;
+  background-color: var(--paper) !important;
   color: var(--ink);
 }
 

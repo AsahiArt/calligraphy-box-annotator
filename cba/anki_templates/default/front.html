@@ -28,17 +28,7 @@
       if (!el) return;
       el.style.height = el.style.minHeight = el.style.maxHeight = px;
       el.style.overflow = "hidden";
-      el.style.background = paperColor();
     });
-  }
-  function paperColor(){
-    var nodes = [document.querySelector(".card"), document.body, document.documentElement];
-    for (var i = 0; i < nodes.length; i++) {
-      if (!nodes[i]) continue;
-      var value = getComputedStyle(nodes[i]).getPropertyValue("--paper");
-      if (value && value.trim()) return value.trim();
-    }
-    return "#f4ecd8";
   }
   fit();
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fit);
