@@ -35,7 +35,6 @@
       if (!el) return;
       el.style.height = el.style.minHeight = el.style.maxHeight = px;
       el.style.overflow = "hidden";
-      el.style.background = getComputedStyle(root).getPropertyValue("--paper") || "#f4ecd8";
     });
   }
   function pairVariants(){
@@ -47,6 +46,8 @@
       : [];
     if (srcNode) srcNode.remove();
     var imgs = Array.prototype.slice.call(gallery.querySelectorAll("img"));
+    gallery.classList.toggle("few", imgs.length > 0 && imgs.length <= 2);
+    gallery.classList.toggle("many", imgs.length > 2);
     if (!imgs.length) {
       var fallback = document.createElement("div");
       fallback.className = "fallback";

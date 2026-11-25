@@ -19,7 +19,7 @@
 6. **能确定就写 spec，然后应用。** `python -m cba apply-spec --spec <文件> --label fix-1 --json`。它会先备份成 `boxes.json.pre_<label>`，再替换点名的列。然后重新 `export-column`（或 `python -m cba contact-sheet --json`）再看一遍。确认无误后：`python -m cba review --plate <图版> --col <列号> --reviewed --json`。
 7. **不能确定就升级，不要猜字。** `python -m cba review --plate <图版> --col <列号> --unresolved --note "原因" --json`。原因写给人看，例如墨迹不够、顶边是空白、补纸上只剩几个字。
 8. **交给人的清单**就是 `status --json` 里的 `unresolved`。另外跑 `python -m cba validate --json`。有问题且该列不是 `approved` 时，用 spec 修，或标 unresolved。`approved` 列即使校验报错也不要改框，把问题写进 unresolved 的 note 即可。
-9. **导出牌组。** 框定稿之后：`python -m cba anki --deck-name <名字> --out deck.apkg --json`。一个字一张笔记。字段是 `Char`、`Image`、`Variants`、`Sources`、`Count`，版式在 `cba/anki_templates/default/`（或 `--template-dir`）。跳过 `repeatMark` 和 `noCard`。图是 JPEG 媒体文件（`<img src="文件名.jpg">`），不要嵌 base64。牌组 id 由牌组名决定，笔记模板 id 由牌组名和模板集 `id` 决定，笔记 GUID 由牌组名和字决定。同名再导入会更新原来的笔记。要改卡片样子就改模板文件，不要改 Python。这一步不改 `boxes.json`。
+9. **导出牌组。** 框定稿之后：`python -m cba anki --deck-name <名字> --out deck.apkg --json`。一个字一张笔记。字段是 `Char`、`Image`、`Variants`、`Sources`、`Count`，版式在 `cba/anki_templates/default/`（或 `--template-dir`）。跳过 `repeatMark` 和 `noCard`。图是 JPEG 媒体文件（`<img src="文件名.jpg">`），不要嵌 base64。牌组 id 由牌组名决定，笔记模板 id 由牌组名和模板集 `id` 决定，笔记 GUID 由牌组名和字决定。同名再导入会更新原来的笔记。要改卡片样子就改模板文件，不要改 Python。背面题目只占必要高度，写法图占剩余空间；深色模式不反转字形图。这一步不改 `boxes.json`。已有书谱牌组只换背面时用 `python tools/patch_apkg_back.py`，不要改它的字段和模型 id。
 
 中断之后从第 2 步继续。进度在配置的 boxes 路径旁边：`boxes.json` 对应 `boxes.review.json`。`reviewed` 的列不要重看，除非后来的 `validate` 指出它有问题。牌组是最后一步，不参与断点。
 

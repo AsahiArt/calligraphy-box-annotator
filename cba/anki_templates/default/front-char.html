@@ -28,7 +28,6 @@
       if (!el) return;
       el.style.height = el.style.minHeight = el.style.maxHeight = px;
       el.style.overflow = "hidden";
-      el.style.background = getComputedStyle(root).getPropertyValue("--paper") || "#f4ecd8";
     });
   }
   fit();

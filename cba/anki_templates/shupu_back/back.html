@@ -1,0 +1,105 @@
+<div class="leaf back" lang="zh" data-same="{{Same}}">
+  <div class="reprise">
+    <div class="front-single">
+      <div class="han printed solo">{{Simplified}}</div>
+    </div>
+    <div class="front-pair">
+      <div class="pair">
+        <div class="form">
+          <div class="han printed">{{Simplified}}</div>
+          <div class="cap">「简」</div>
+        </div>
+        <div class="sep"></div>
+        <div class="form">
+          <div class="han printed">{{Traditional}}</div>
+          <div class="cap">「繁」</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gallery multi">
+    {{#ImgSun}}{{ImgSun}}{{/ImgSun}}
+    {{#ImgMifu}}
+    <figure class="slot">
+      <img src="{{ImgMifu}}" alt="米芾">
+      <figcaption>米芾</figcaption>
+    </figure>
+    {{/ImgMifu}}
+    {{#ImgHuaisu}}
+    <figure class="slot">
+      <img src="{{ImgHuaisu}}" alt="怀素">
+      <figcaption>怀素</figcaption>
+    </figure>
+    {{/ImgHuaisu}}
+    {{^ImgSun}}{{^ImgMifu}}{{^ImgHuaisu}}
+    <div class="fallback">
+      <div class="han cursive">{{CursiveChar}}</div>
+      <figcaption>刘建毛草</figcaption>
+    </div>
+    {{/ImgHuaisu}}{{/ImgMifu}}{{/ImgSun}}
+  </div>
+</div>
+
+<script>
+(function(){
+  function measure(){
+    var vv = window.visualViewport;
+    var h = 0;
+    if (vv && vv.height) h = vv.height;
+    if (window.innerHeight > h) h = window.innerHeight;
+    var ch = document.documentElement && document.documentElement.clientHeight;
+    if (ch > h) h = ch;
+    var sh = (window.screen && (window.screen.availHeight || window.screen.height)) || 0;
+    if (sh && h < sh * 0.58) h = Math.round(sh * 0.70);
+    return Math.round(h);
+  }
+  function fit(){
+    var h = measure();
+    if (!h) return;
+    var px = h + "px";
+    var root = document.documentElement;
+    root.style.setProperty("--pane", px);
+    root.style.height = root.style.minHeight = root.style.maxHeight = px;
+    [document.body, document.getElementById("qa"), document.querySelector(".card")].forEach(function(el){
+      if (!el) return;
+      el.style.height = el.style.minHeight = el.style.maxHeight = px;
+      el.style.overflow = "hidden";
+    });
+  }
+  function markCount(){
+    var gallery = document.querySelector(".gallery.multi");
+    if (!gallery) return;
+    var count = gallery.querySelectorAll("img").length;
+    gallery.classList.toggle("few", count > 0 && count <= 2);
+    gallery.classList.toggle("many", count > 2);
+  }
+  function hideBroken(){
+    document.querySelectorAll(".slot img, .gallery img").forEach(function(img){
+      img.addEventListener("error", function(){
+        var slot = img.closest(".slot");
+        if (slot) slot.style.display = "none";
+      });
+    });
+  }
+  fit();
+  markCount();
+  hideBroken();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function(){ fit(); hideBroken(); });
+  }
+  window.addEventListener("resize", fit);
+  window.addEventListener("orientationchange", function(){
+    setTimeout(fit, 80);
+    setTimeout(fit, 300);
+  });
+  var vv = window.visualViewport;
+  if (vv){
+    vv.addEventListener("resize", fit);
+    vv.addEventListener("scroll", fit);
+  }
+  setTimeout(fit, 0);
+  setTimeout(fit, 80);
+  setTimeout(fit, 240);
+  setTimeout(fit, 600);
+})();
+</script>
